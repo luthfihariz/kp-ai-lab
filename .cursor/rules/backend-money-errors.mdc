@@ -1,0 +1,10 @@
+---
+description: Money and error handling in the API
+globs: apps/api/**/*.ts
+alwaysApply: false
+---
+- Money is whole rupiah in a number and must stay an integer. Never Math.round, toFixed or fractional amounts.
+- Percentages: mulBps(amount, bps), where 1% = 100 bps. Division: divRoundHalfUp. Both in @apps/api/src/money.ts.
+- Errors: httpError(status, CODE, message) from @apps/api/src/errors.ts. Use only codes in contract/openapi.yaml (LOAN_NOT_FOUND, LOAN_NOT_ACTIVE, QUOTE_EXPIRED, UNDERPAYMENT). Never invent a code.
+- Another borrower's loan returns 404 LOAN_NOT_FOUND, never 403.
+- Layout: logic in src/<feature>/index.ts, HTTP in src/<feature>/routes.ts, tests in src/tests.

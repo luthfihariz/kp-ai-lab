@@ -1,0 +1,10 @@
+---
+description: Analysis SQL in db/analysis
+globs: db/analysis/**
+alwaysApply: false
+---
+- Bucket days and months with AT TIME ZONE 'Asia/Jakarta'. Never UTC.
+- Count quotes with COUNT(DISTINCT quote_id); payoff_events has several rows per quote.
+- No NIK, phone, email or bank account in any output column.
+- Write every assumption as a SQL comment at the top.
+- Amounts are whole rupiah; don't divide money without saying how it is rounded.
