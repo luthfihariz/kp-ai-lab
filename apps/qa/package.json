@@ -1,0 +1,17 @@
+{
+  "name": "@kp/qa",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test:all": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=e2e",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  }
+}

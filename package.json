@@ -1,0 +1,22 @@
+{
+  "name": "kp-lab",
+  "private": true,
+  "packageManager": "pnpm@10.6.0",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "mock": "turbo mock dev:mock",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
+    "db:up": "docker compose up -d --wait db && pnpm --filter @kp/db db:setup",
+    "db:reset": "docker compose down -v && pnpm db:up",
+    "db:down": "docker compose down",
+    "db:studio": "pnpm --filter @kp/db db:studio",
+    "test:qa": "pnpm --filter @kp/qa test:all"
+  },
+  "devDependencies": {
+    "turbo": "^2.6.1"
+  }
+}

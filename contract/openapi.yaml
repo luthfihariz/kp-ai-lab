@@ -1,0 +1,547 @@
+openapi: 3.0.3
+info:
+  title: KP Training Lab API
+  version: 1.0.0
+  description: |
+    Practice P2P lending API for the AI productivity training.
+    All amounts are whole rupiah (IDR) as integers. All data is synthetic.
+    Endpoints tagged "early-repayment" and "payments" are built during the lab.
+servers:
+  - url: http://localhost:8080
+    description: Hono API
+  - url: http://localhost:4010
+    description: Prism mock server (pnpm mock)
+tags:
+  - name: auth
+  - name: loans
+  - name: early-repayment
+    description: Pelunasan Dipercepat (early loan payoff). Built in the lab.
+  - name: payments
+    description: Payment provider callbacks. Built in the lab (stretch).
+security:
+  - bearerAuth: []
+paths:
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: Log in with a demo borrower account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: budi@example.com
+              password: password123
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              example:
+                token: demo-B001
+                borrower:
+                  id: B001
+                  name: Budi Santoso
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/me:
+    get:
+      tags: [auth]
+      summary: The logged-in borrower's profile, with contact and bank details masked
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+              example:
+                id: B001
+                name: Budi Santoso
+                email: budi@example.com
+                phoneMasked: '+62812****0001'
+                bankName: BCA
+                bankAccountMasked: '****4501'
+                city: Bekasi
+                activeLoans: 5
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/loans:
+    get:
+      tags: [loans]
+      summary: List the logged-in borrower's loans
+      responses:
+        '200':
+          description: Loans owned by the borrower
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanSummary'
+              example:
+                - id: LN-1001
+                  status: ACTIVE
+                  principal: 6000000
+                  tenorMonths: 6
+                  disbursedAt: '2026-07-14'
+                  outstandingPrincipal: 2000000
+                  nextDueDate: '2026-12-14'
+                  isOverdue: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/loans/{id}:
+    get:
+      tags: [loans]
+      summary: Get one loan with its installment schedule
+      parameters:
+        - $ref: '#/components/parameters/LoanId'
+      responses:
+        '200':
+          description: Loan detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanDetail'
+              example:
+                id: LN-1001
+                borrowerId: B001
+                status: ACTIVE
+                principal: 6000000
+                tenorMonths: 6
+                monthlyInterestRateBps: 300
+                disbursedAt: '2026-07-14'
+                lateFees: 0
+                outstandingPrincipal: 2000000
+                isOverdue: false
+                installments:
+                  - number: 5
+                    dueDate: '2026-12-14'
+                    principal: 1000000
+                    interest: 180000
+                    amount: 1180000
+                    daysInPeriod: 30
+                    status: UNPAID
+                borrower:
+                  id: B001
+                  name: Budi Santoso
+                  nik: '3275011207900001'
+                  phone: '+6281234500001'
+                  email: budi@example.com
+                  bankName: BCA
+                  bankAccountNumber: '8801234501'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+  /api/loans/{id}/early-repayment/quote:
+    post:
+      tags: [early-repayment]
+      summary: Create an early repayment quote
+      description: |
+        Calculates how much the borrower must pay today to close the loan.
+        Rules are in docs/prd-early-repayment.md. Each component is rounded
+        half-up to whole rupiah; total is the sum of the components.
+      parameters:
+        - $ref: '#/components/parameters/LoanId'
+      responses:
+        '201':
+          description: Quote created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EarlyRepaymentQuote'
+              example:
+                quoteId: Q-LN-1001-20261116
+                loanId: LN-1001
+                outstandingPrincipal: 2000000
+                overdueInterest: 0
+                accruedInterestDays: 2
+                accruedInterest: 4000
+                lateFees: 0
+                earlyRepaymentFee: 20000
+                total: 2024000
+                currency: IDR
+                validUntil: '2026-11-16T23:59:59+07:00'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanNotActive'
+  /api/loans/{id}/early-repayment/confirm:
+    post:
+      tags: [early-repayment]
+      summary: Confirm a quote and get a virtual account to pay into
+      description: Idempotent. Confirming the same quote again returns the same virtual account.
+      parameters:
+        - $ref: '#/components/parameters/LoanId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmRequest'
+            example:
+              quoteId: Q-LN-1001-20261116
+      responses:
+        '200':
+          description: Virtual account issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmResponse'
+              example:
+                quoteId: Q-LN-1001-20261116
+                loanId: LN-1001
+                virtualAccountNumber: '8808001001116'
+                amount: 2024000
+                expiresAt: '2026-11-16T23:59:59+07:00'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/LoanNotFound'
+        '409':
+          $ref: '#/components/responses/LoanNotActive'
+        '410':
+          description: The quote has expired; request a new one
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: QUOTE_EXPIRED
+                message: quote has expired, request a new quote
+  /api/payments/callback:
+    post:
+      tags: [payments]
+      summary: Payment provider notifies a virtual account payment
+      description: Signature verification is out of scope for the lab.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCallback'
+            example:
+              virtualAccountNumber: '8808001001116'
+              amount: 2024000
+              paidAt: '2026-11-16T14:05:00+07:00'
+      responses:
+        '200':
+          description: Payment accepted and loan paid off
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResult'
+              example:
+                loanId: LN-1001
+                status: PAID_OFF
+        '404':
+          description: Unknown virtual account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: VIRTUAL_ACCOUNT_NOT_FOUND
+                message: virtual account not found
+        '422':
+          description: Paid amount is less than the quote total; loan stays ACTIVE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: UNDERPAYMENT
+                message: paid amount is less than the quote total
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    LoanId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: LN-1001
+  responses:
+    Unauthorized:
+      description: Missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: missing or invalid token
+    LoanNotFound:
+      description: Loan does not exist or belongs to another borrower
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: LOAN_NOT_FOUND
+            message: loan not found
+    LoanNotActive:
+      description: Loan is PAID_OFF or CANCELLED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: LOAN_NOT_ACTIVE
+            message: loan is not active
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required: [token, borrower]
+      properties:
+        token:
+          type: string
+        borrower:
+          type: object
+          required: [id, name]
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+    Profile:
+      type: object
+      required: [id, name, email, phoneMasked, bankName, bankAccountMasked, city, activeLoans]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneMasked:
+          type: string
+          description: First 6 and last 4 characters of the phone number, the rest as *
+        bankName:
+          type: string
+        bankAccountMasked:
+          type: string
+          description: '**** plus the last 4 digits of the bank account number'
+        city:
+          type: string
+        activeLoans:
+          type: integer
+          format: int64
+          description: Number of the borrower's loans with status ACTIVE
+    LoanStatus:
+      type: string
+      enum: [ACTIVE, PAID_OFF, CANCELLED]
+    LoanSummary:
+      type: object
+      required: [id, status, principal, tenorMonths, disbursedAt, outstandingPrincipal, nextDueDate, isOverdue]
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/LoanStatus'
+        principal:
+          type: integer
+          format: int64
+        tenorMonths:
+          type: integer
+        disbursedAt:
+          type: string
+          format: date
+        outstandingPrincipal:
+          type: integer
+          format: int64
+        nextDueDate:
+          type: string
+          format: date
+          nullable: true
+        isOverdue:
+          type: boolean
+    Installment:
+      type: object
+      required: [number, dueDate, principal, interest, amount, daysInPeriod, status]
+      properties:
+        number:
+          type: integer
+        dueDate:
+          type: string
+          format: date
+        principal:
+          type: integer
+          format: int64
+        interest:
+          type: integer
+          format: int64
+        amount:
+          type: integer
+          format: int64
+        daysInPeriod:
+          type: integer
+          description: Actual calendar days since the previous due date (or disbursement)
+        status:
+          type: string
+          enum: [PAID, UNPAID, CANCELLED]
+    Borrower:
+      type: object
+      required: [id, name, nik, phone, email, bankName, bankAccountNumber]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nik:
+          type: string
+          description: Sensitive. Synthetic in this lab.
+        phone:
+          type: string
+          description: Sensitive. Synthetic in this lab.
+        email:
+          type: string
+        bankName:
+          type: string
+        bankAccountNumber:
+          type: string
+          description: Sensitive. Synthetic in this lab.
+    LoanDetail:
+      type: object
+      required: [id, borrowerId, status, principal, tenorMonths, monthlyInterestRateBps, disbursedAt, lateFees, installments, outstandingPrincipal, isOverdue, borrower]
+      properties:
+        id:
+          type: string
+        borrowerId:
+          type: string
+        status:
+          $ref: '#/components/schemas/LoanStatus'
+        principal:
+          type: integer
+          format: int64
+        tenorMonths:
+          type: integer
+        monthlyInterestRateBps:
+          type: integer
+          format: int64
+          description: Flat monthly interest in basis points (300 = 3% per month)
+        disbursedAt:
+          type: string
+          format: date
+        lateFees:
+          type: integer
+          format: int64
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installment'
+        outstandingPrincipal:
+          type: integer
+          format: int64
+        isOverdue:
+          type: boolean
+        borrower:
+          $ref: '#/components/schemas/Borrower'
+    EarlyRepaymentQuote:
+      type: object
+      required: [quoteId, loanId, outstandingPrincipal, overdueInterest, accruedInterestDays, accruedInterest, lateFees, earlyRepaymentFee, total, currency, validUntil]
+      properties:
+        quoteId:
+          type: string
+        loanId:
+          type: string
+        outstandingPrincipal:
+          type: integer
+          format: int64
+        overdueInterest:
+          type: integer
+          format: int64
+          description: Interest of unpaid installments whose due date is before today
+        accruedInterestDays:
+          type: integer
+        accruedInterest:
+          type: integer
+          format: int64
+        lateFees:
+          type: integer
+          format: int64
+        earlyRepaymentFee:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+        currency:
+          type: string
+          enum: [IDR]
+        validUntil:
+          type: string
+          format: date-time
+    ConfirmRequest:
+      type: object
+      required: [quoteId]
+      properties:
+        quoteId:
+          type: string
+    ConfirmResponse:
+      type: object
+      required: [quoteId, loanId, virtualAccountNumber, amount, expiresAt]
+      properties:
+        quoteId:
+          type: string
+        loanId:
+          type: string
+        virtualAccountNumber:
+          type: string
+        amount:
+          type: integer
+          format: int64
+        expiresAt:
+          type: string
+          format: date-time
+    PaymentCallback:
+      type: object
+      required: [virtualAccountNumber, amount, paidAt]
+      properties:
+        virtualAccountNumber:
+          type: string
+        amount:
+          type: integer
+          format: int64
+        paidAt:
+          type: string
+          format: date-time
+    PaymentResult:
+      type: object
+      required: [loanId, status]
+      properties:
+        loanId:
+          type: string
+        status:
+          $ref: '#/components/schemas/LoanStatus'
