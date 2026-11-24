@@ -1,0 +1,41 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_USER: lab
+          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
+          POSTGRES_DB: lab
+        ports:
+          - 5499:5432
+        options: >-
+          --health-cmd "pg_isready -U lab -d lab"
+          --health-interval 2s --health-retries 30
+    env:
+      DATABASE_URL: postgres://lab:${{ secrets.CI_DB_PASSWORD }}@localhost:5499/lab
+    steps:
+      # Pin each action to a full commit SHA in real use.
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm --filter @kp/db db:setup
+      - run: pnpm --filter @kp/qa exec playwright install --with-deps chromium
+      - run: pnpm dev &
+      - run: npx --yes wait-on http://localhost:8080/api/loans http://localhost:5173
+      - run: pnpm test:qa

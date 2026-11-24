@@ -1,0 +1,9 @@
+---
+description: Never log or display raw PII
+alwaysApply: true
+---
+- Never log NIK, phone, email or bank account.
+  Log IDs (borrowerId, loanId) instead.
+- Screens show bank accounts as ****1234.
+- Test data is synthetic. Never copy real
+  customer data into code, tests or prompts.
