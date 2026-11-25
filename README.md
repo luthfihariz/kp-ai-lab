@@ -22,10 +22,9 @@ This repo is a pnpm workspace run by Turborepo.
 | `apps/web/`    | React + TypeScript + Vite                                                             | Login, loan list, loan detail                 | Payoff screen (`src/pages/EarlyRepaymentPage.tsx`)            |
 | `apps/qa/`     | Playwright tests                                                                      | 4 API tests, 2 E2E tests, a page object       | Early repayment tests (`apps/qa/tests/early-repayment/`)      |
 | `packages/db/` | Drizzle schema and migrations                                                         | Borrowers, loans, installments, payoff events |                                                               |
-| `docs/`        | PRD, fee rules, ticket KP-421 (copied from Meegle), design notes, data request KP-425 |                                               |                                                               |
+| `docs/`        | PRD, fee rules, ticket KP-421 (copied from Meegle), design notes, data request KP-425, spec of the existing loan behaviour (`docs/spec-loans.md`) |                                               |                                                               |
 | `db/`          | Synthetic Postgres seed (`db/seed.sql`)                                               | Borrowers, loans, installments, payoff events | Your tables, views and models                                 |
-| `openspec/`    | OpenSpec specs and changes                                                            | A spec of the existing loan behaviour         | One change per participant (Session 4)                        |
-| `.cursor/`     | Cursor rules and skills                                                               | `/onboard-me` and the OpenSpec commands       | Your rules, commands, skills and subagents (Sessions 2 and 3) |
+| `.cursor/`     | Cursor rules and skills                                                               | `/onboard-me`       | Your rules, commands, skills and subagents (Sessions 2 and 3) |
 
 ## Prerequisites
 
@@ -33,7 +32,6 @@ This repo is a pnpm workspace run by Turborepo.
 |---|---|---|
 | Node.js | 20.19 or newer | `node -v` |
 | pnpm | 10.6 | `corepack enable && corepack prepare pnpm@10.6.0 --activate`, then `pnpm -v` |
-| OpenSpec CLI | 2.x | `pnpm add -g @fission-ai/openspec@latest`, then `openspec --version` |
 | Docker | Desktop or Engine, with Compose | `docker compose version` |
 | Cursor | 2.4 or newer (skills, subagents, hooks) | Signed in, Agent replies |
 
@@ -127,20 +125,6 @@ pnpm db:studio  # open Drizzle Studio for the lab database
 Open a shell with `docker compose exec db psql -U lab -d lab` (password `lab`).
 
 Tables: `borrowers`, `loans`, `installments`, and `analytics.payoff_events` (quote created, confirmed, expired, paid). About 150 synthetic borrowers and 300 loans; Budi, Siti and their loans match the app. The API reads and writes this database.
-
-## OpenSpec (Session 4)
-
-OpenSpec is set up for Cursor. Each lab task is one change:
-
-| Step | In Cursor | What happens |
-|---|---|---|
-| Explore (optional) | `/openspec-explore` | Think through the ticket before writing anything |
-| Propose | `/openspec-propose <what you're building>` | Creates `openspec/changes/<name>/` with proposal, specs, design and tasks |
-| Apply | `/openspec-apply-change` | Implements the tasks one by one |
-| Verify | `/openspec-verify-change` | Checks the code against the change's specs and tasks |
-| Archive | `/openspec-archive-change` | Merges the change's specs into `openspec/specs/` and moves the change to the archive |
-
-Check from the terminal with `openspec list` and `openspec validate`. If the commands don't show in Cursor, restart Cursor and check Cursor Settings > Rules.
 
 ## The lab task
 

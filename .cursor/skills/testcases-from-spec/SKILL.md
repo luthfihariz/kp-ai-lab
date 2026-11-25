@@ -1,6 +1,6 @@
 ---
 name: testcases-from-spec
-description: Turn a spec (OpenSpec scenarios or PRD acceptance criteria) into a test-case table.
+description: Turn a spec (spec scenarios or PRD acceptance criteria) into a test-case table.
 disable-model-invocation: true
 ---
 The user gives a spec file after the command, and optionally the scenario or AC ids.
