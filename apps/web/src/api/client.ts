@@ -2,6 +2,7 @@ import createClient from "openapi-fetch";
 import type { components, paths } from "./schema";
 import { getToken } from "../auth";
 
+export type Profile = components["schemas"]["Profile"];
 export type LoanSummary = components["schemas"]["LoanSummary"];
 export type LoanDetail = components["schemas"]["LoanDetail"];
 export type Installment = components["schemas"]["Installment"];

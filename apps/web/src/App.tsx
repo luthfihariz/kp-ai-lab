@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { getToken } from "./auth";
 import { LoginPage } from "./pages/LoginPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { LoanListPage } from "./pages/LoanListPage";
 import { LoanDetailPage } from "./pages/LoanDetailPage";
 import { EarlyRepaymentPage } from "./pages/EarlyRepaymentPage";
@@ -14,6 +15,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/profil" element={<RequireLogin><ProfilePage /></RequireLogin>} />
       <Route path="/loans" element={<RequireLogin><LoanListPage /></RequireLogin>} />
       <Route path="/loans/:id" element={<RequireLogin><LoanDetailPage /></RequireLogin>} />
       <Route path="/loans/:id/early-repayment" element={<RequireLogin><EarlyRepaymentPage /></RequireLogin>} />
