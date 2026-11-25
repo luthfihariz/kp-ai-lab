@@ -1,3 +1,4 @@
+import { sentry } from "@sentry/hono/node";
 import { factory } from "./env";
 import { authRoutes } from "./auth/routes";
 import { loanRoutes } from "./loans/routes";
@@ -17,6 +18,7 @@ export function resolveToday(value = process.env.APP_TODAY) {
 
 export function createApp(db: AppDb, today = resolveToday()) {
   const app = factory.createApp();
+  app.use(sentry(app));
   app.route("/api/auth", authRoutes(db));
   app.route("/api/loans", loanRoutes(db, today));
   return app;
