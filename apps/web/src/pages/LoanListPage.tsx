@@ -28,7 +28,10 @@ export function LoanListPage() {
     <main className="page">
       <header className="page-header">
         <h1>Pinjaman Saya</h1>
-        <button className="secondary" onClick={logout}>Keluar</button>
+        <div className="page-header">
+          <Link to="/profil">Profil</Link>
+          <button className="secondary" onClick={logout}>Keluar</button>
+        </div>
       </header>
       {failed && <p role="alert" className="error">Gagal memuat pinjaman.</p>}
       {!loans && !failed && <p>Memuat…</p>}
