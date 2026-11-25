@@ -4,6 +4,8 @@ alwaysApply: true
 ---
 - Never log NIK, phone, email or bank account.
   Log IDs (borrowerId, loanId) instead.
+- SQL selects borrower_id, never name, NIK,
+  phone, email or account; mask if needed.
 - Screens show bank accounts as ****1234.
 - Test data is synthetic. Never copy real
   customer data into code, tests or prompts.
