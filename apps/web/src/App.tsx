@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import * as Sentry from "@sentry/react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { getToken } from "./auth";
 import { LoginPage } from "./pages/LoginPage";
@@ -10,14 +11,16 @@ function RequireLogin({ children }: { children: ReactNode }) {
   return getToken() ? children : <Navigate to="/login" replace />;
 }
 
+const SentryRoutes = Sentry.wrapReactRouterRouting(Routes);
+
 export function App() {
   return (
-    <Routes>
+    <SentryRoutes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/loans" element={<RequireLogin><LoanListPage /></RequireLogin>} />
       <Route path="/loans/:id" element={<RequireLogin><LoanDetailPage /></RequireLogin>} />
       <Route path="/loans/:id/early-repayment" element={<RequireLogin><EarlyRepaymentPage /></RequireLogin>} />
       <Route path="*" element={<Navigate to="/loans" replace />} />
-    </Routes>
+    </SentryRoutes>
   );
 }
