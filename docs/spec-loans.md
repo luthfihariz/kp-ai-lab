@@ -1,4 +1,4 @@
-# loans Specification
+# Spec: loans (existing behaviour)
 
 ## Purpose
 How a borrower logs in and views their loans and installment schedules in the KP training lab. This is the behaviour that exists before the Pelunasan Dipercepat lab starts.
