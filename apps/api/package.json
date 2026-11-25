@@ -4,14 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
-    "@kp/db": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
+    "@kp/db": "workspace:*",
+    "@sentry/hono": "11.17.0",
+    "@sentry/profiling-node": "11.17.0",
     "drizzle-orm": "^0.44.7",
     "hono": "^4.10.4",
     "zod": "^4.1.13"

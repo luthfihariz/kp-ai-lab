@@ -12,6 +12,7 @@
     "generate:api": "openapi-typescript ../../contract/openapi.yaml -o src/api/schema.ts"
   },
   "dependencies": {
+    "@sentry/react": "11.17.0",
     "openapi-fetch": "^0.17.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
