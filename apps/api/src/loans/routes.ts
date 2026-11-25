@@ -18,6 +18,10 @@ export function loanRoutes(db: AppDb, today: string) {
 
   loans.get("/", async (c) => {
     const rows = await loansFor(db, c.var.borrowerId);
+    console.info("loans listed", {
+      borrowerId: c.var.borrowerId,
+      loanIds: rows.map((loan) => loan.id),
+    });
     return c.json(rows.map((loan) => toSummary(loan, today)));
   });
 
@@ -30,7 +34,7 @@ export function loanRoutes(db: AppDb, today: string) {
     if (!borrower) {
       httpError(404, "LOAN_NOT_FOUND", "loan not found");
     }
-    console.info("loan viewed", { loanId: loan.id, borrower });
+    console.info("loan viewed", { loanId: loan.id, borrowerId: loan.borrowerId });
     return c.json({
       ...toLoan(loan),
       outstandingPrincipal: outstandingPrincipal(loan),
