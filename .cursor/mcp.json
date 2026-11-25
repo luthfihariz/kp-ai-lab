@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "meegle": {
+      "url": "https://meegle.com/mcp_server/v1"
+    },
+    "figma": {
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "sentry": {
+      "url": "https://mcp.sentry.dev/mcp/luthfi-hariz"
+    }
+  }
+}
