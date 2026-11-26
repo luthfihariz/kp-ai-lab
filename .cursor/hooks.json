@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [{
+      "command": ".cursor/hooks/block-nik.sh",
+      "failClosed": true }],
+    "beforeReadFile": [{
+      "command": ".cursor/hooks/deny-exports.sh",
+      "failClosed": true }],
+    "beforeShellExecution": [{
+      "command": ".cursor/hooks/ask-db.sh",
+      "matcher": "psql|pg_dump" }]
+  }
+}
