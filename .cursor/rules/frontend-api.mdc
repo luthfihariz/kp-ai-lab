@@ -1,0 +1,11 @@
+---
+description: API calls, types and states in the web app
+globs: apps/web/src/**/*.tsx
+alwaysApply: false
+---
+- Call the API only through `api` from @apps/web/src/api/client.ts. No fetch, no axios.
+- Types: use the aliases in client.ts (LoanDetail, Installment, EarlyRepaymentQuote, ApiError). Never hand-write API types; after a contract change run pnpm --filter @kp/web generate:api.
+- Money and dates: formatRupiah and formatDate from @apps/web/src/format.ts. Never toLocaleString or toFixed.
+- Every page that loads data shows loading, error and empty states, like @apps/web/src/pages/LoanListPage.tsx.
+- UI text in Bahasa Indonesia.
+- Never show NIK, phone or a full bank account; bank account as ****1234.

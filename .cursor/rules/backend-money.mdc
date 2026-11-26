@@ -1,0 +1,9 @@
+---
+description: Money handling in the API (apps/api)
+globs: apps/api/**/*.ts
+alwaysApply: false
+---
+- Money is whole rupiah in a number, and must stay an integer. Never Math.round, toFixed or fractional money.
+- Percentages use basis points with mulBps; division uses divRoundHalfUp (half-up), both from apps/api/src/money.ts.
+- Errors: httpError(status, CODE, message) from apps/api/src/errors.ts, codes from contract/openapi.yaml.
+- Copy the style of @apps/api/src/loans/schedule.ts and its tests in apps/api/src/tests.

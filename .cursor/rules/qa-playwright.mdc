@@ -1,0 +1,10 @@
+---
+description: Playwright conventions for apps/qa
+globs: apps/qa/**/*.ts
+alwaysApply: false
+---
+- API tests end in .api.spec.ts, browser tests in .e2e.spec.ts. The Playwright projects pick files by that name.
+- Log in with loginAs(request, user) and authHeader(token) from @apps/qa/fixtures/api.ts. Users come from apps/qa/fixtures/users.ts (budi = B001, siti = B002). Never hard-code tokens.
+- Browser tests use page objects in apps/qa/pages, like @apps/qa/pages/LoginPage.ts. No raw selectors in the test body.
+- No fixed waits (waitForTimeout). Wait on locators or responses.
+- Assert values, not only the status code: amounts in whole rupiah, worked out from the PRD.

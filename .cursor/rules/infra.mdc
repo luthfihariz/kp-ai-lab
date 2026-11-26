@@ -1,0 +1,10 @@
+---
+description: Containers and CI
+globs: **/Dockerfile, compose.yaml, .github/**
+alwaysApply: false
+---
+- Containers run as a non-root user.
+- Pin image versions (node:20.19-alpine, postgres:16.x), never latest.
+- Secrets come from environment variables or the CI secret store. Never in a file, never in an image layer; .env is never copied.
+- CI jobs get the least permissions they need (permissions: contents: read by default).
+- Monorepo Dockerfiles use turbo prune <package> --docker (@kp/web, @kp/api).

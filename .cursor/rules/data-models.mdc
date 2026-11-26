@@ -1,0 +1,10 @@
+---
+description: SQL models in db/models
+globs: db/models/**
+alwaysApply: false
+---
+- Start every model with a comment stating its grain, e.g. "one row per quote_id".
+- Event tables (like analytics.payoff_events) have one row per event. Aggregate to the grain before joining.
+- Dates: convert timestamptz with AT TIME ZONE 'Asia/Jakarta' before taking the date. Never bucket in UTC.
+- No PII columns: no NIK, phone, email, name or bank account. borrower_id only.
+- Every model ships with checks as SQL queries that return zero rows: uniqueness of the grain, not-null on required columns.
