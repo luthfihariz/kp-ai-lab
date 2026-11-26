@@ -2,5 +2,5 @@
 
 Lab: put your Pelunasan Dipercepat tests here.
 
-- Acceptance criteria: docs/prd-early-repayment.md
+- Acceptance criteria: docs/prd/prd-early-repayment.md
 - Contract: contract/openapi.yaml

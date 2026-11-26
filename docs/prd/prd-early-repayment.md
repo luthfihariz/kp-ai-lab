@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Status | Ready for development |
-| Design | docs/design-early-repayment.md (mockups in docs/design/) |
+| Design | docs/design/design-early-repayment.md (mockups in docs/design/) |
 | API contract | contract/openapi.yaml, tag `early-repayment` |
 
 ## Problem

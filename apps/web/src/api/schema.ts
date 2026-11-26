@@ -246,7 +246,7 @@ export interface paths {
         /**
          * Create an early repayment quote
          * @description Calculates how much the borrower must pay today to close the loan.
-         *     Rules are in docs/prd-early-repayment.md. Each component is rounded
+         *     Rules are in docs/prd/prd-early-repayment.md. Each component is rounded
          *     half-up to whole rupiah; total is the sum of the components.
          */
         post: {

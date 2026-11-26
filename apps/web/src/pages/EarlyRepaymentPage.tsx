@@ -8,7 +8,7 @@ export function EarlyRepaymentPage() {
       <Link to={`/loans/${id}`}>← Pinjaman</Link>
       <h1>Pelunasan Dipercepat</h1>
       <p>
-        Layar ini dibangun saat lab. Lihat docs/design-early-repayment.md, mockup di docs/design/, dan
+        Layar ini dibangun saat lab. Lihat docs/design/design-early-repayment.md, mockup di docs/design/, dan
         POST /api/loans/{"{id}"}/early-repayment/quote di contract/openapi.yaml.
       </p>
     </main>

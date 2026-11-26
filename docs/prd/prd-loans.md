@@ -1,4 +1,4 @@
-# Spec: Loans (current behaviour)
+# PRD: Loans (current behaviour)
 
 | | |
 |---|---|

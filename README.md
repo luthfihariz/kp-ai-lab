@@ -22,7 +22,7 @@ This repo is a pnpm workspace run by Turborepo.
 | `apps/web/`    | React + TypeScript + Vite                                                             | Login, loan list, loan detail                 | Payoff screen (`src/pages/EarlyRepaymentPage.tsx`)            |
 | `apps/qa/`     | Playwright tests                                                                      | 4 API tests, 2 E2E tests, a page object       | Early repayment tests (`apps/qa/tests/early-repayment/`)      |
 | `packages/db/` | Drizzle schema and migrations                                                         | Borrowers, loans, installments, payoff events |                                                               |
-| `docs/`        | PRD of the lab feature, design notes and mockups, data request for the data roles, spec of the existing loan behaviour (`docs/spec-loans.md`) |                                               |                                                               |
+| `docs/`        | `prd/`: the lab feature (`prd-early-repayment.md`) and the current loan behaviour (`prd-loans.md`) · `design/`: payoff screen notes and mockups · `data-req/`: the data request for the data roles |                                               |                                                               |
 | `db/`          | Synthetic Postgres seed (`db/seed.sql`)                                               | Borrowers, loans, installments, payoff events | Your tables, views and models                                 |
 | `.cursor/`     | Cursor rules and skills                                                               | `/onboard-me`       | Your rules, commands, skills and subagents (Sessions 2 and 3) |
 
@@ -128,7 +128,7 @@ Tables: `borrowers`, `loans`, `installments`, and `analytics.payoff_events` (quo
 
 ## The lab task
 
-Start with the PRD: [docs/prd-early-repayment.md](docs/prd-early-repayment.md) (rules, acceptance criteria, definition of done). Frontend also uses [docs/design-early-repayment.md](docs/design-early-repayment.md). Data roles start with [docs/data-request-payoff-pilot.md](docs/data-request-payoff-pilot.md).
+Start with the PRD: [docs/prd/prd-early-repayment.md](docs/prd/prd-early-repayment.md) (rules, acceptance criteria, definition of done). Frontend also uses [docs/design/design-early-repayment.md](docs/design/design-early-repayment.md). Data roles start with [docs/data-req/data-request-payoff-pilot.md](docs/data-req/data-request-payoff-pilot.md).
 
 ## Troubleshooting
 

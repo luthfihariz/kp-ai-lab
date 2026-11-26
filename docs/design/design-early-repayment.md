@@ -8,11 +8,11 @@ Route: `/loans/:id/early-repayment` · Language: Bahasa Indonesia
 
 | State | Image |
 |---|---|
-| Default | [payoff-default.png](design/payoff-default.png) |
-| Overdue loan (all rows visible) | [payoff-overdue.png](design/payoff-overdue.png) |
-| Last installment (fee waived) | [payoff-last-installment.png](design/payoff-last-installment.png) |
-| Loading | [payoff-loading.png](design/payoff-loading.png) |
-| Confirming (button disabled) | [payoff-confirming.png](design/payoff-confirming.png) |
+| Default | [payoff-default.png](payoff-default.png) |
+| Overdue loan (all rows visible) | [payoff-overdue.png](payoff-overdue.png) |
+| Last installment (fee waived) | [payoff-last-installment.png](payoff-last-installment.png) |
+| Loading | [payoff-loading.png](payoff-loading.png) |
+| Confirming (button disabled) | [payoff-confirming.png](payoff-confirming.png) |
 
 There are no mockups yet for the confirmed, 409, 410 and network error states. Build those from the text below.
 
