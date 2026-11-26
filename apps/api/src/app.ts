@@ -3,6 +3,7 @@ import { factory } from "./env";
 import { authRoutes } from "./auth/routes";
 import { loanRoutes } from "./loans/routes";
 import type { AppDb } from "./loans";
+import { repaymentRoutes } from "./repayment/routes";
 
 const labToday = "2026-11-16";
 
@@ -21,5 +22,6 @@ export function createApp(db: AppDb, today = resolveToday()) {
   app.use(sentry(app));
   app.route("/api/auth", authRoutes(db));
   app.route("/api/loans", loanRoutes(db, today));
+  app.route("/api/loans", repaymentRoutes(db, today));
   return app;
 }

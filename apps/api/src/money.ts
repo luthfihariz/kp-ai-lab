@@ -8,6 +8,13 @@ export function mulBps(amount: number, bps: number) {
 
 const MS_PER_DAY = 86_400_000;
 
+/** Actual calendar days between two YYYY-MM-DD dates, using UTC midnights. */
+export function calendarDays(from: string, to: string) {
+  const start = Date.parse(`${from}T00:00:00.000Z`);
+  const end = Date.parse(`${to}T00:00:00.000Z`);
+  return (end - start) / MS_PER_DAY;
+}
+
 /** Actual calendar days between two UTC midnights. */
 export function daysBetween(from: Date, to: Date) {
   return (to.getTime() - from.getTime()) / MS_PER_DAY;

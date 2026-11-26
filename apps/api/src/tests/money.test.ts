@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addMonthsClamped, daysBetween, isoDate, mulBps } from "../money";
+import { addMonthsClamped, calendarDays, daysBetween, isoDate, mulBps } from "../money";
 
 describe("mulBps", () => {
   it.each([
@@ -19,6 +19,17 @@ describe("daysBetween", () => {
     ["across February", Date.UTC(2026, 0, 31), Date.UTC(2026, 1, 28), 28],
   ] as const)("%s", (_name, from, to, want) => {
     expect(daysBetween(new Date(from), new Date(to))).toBe(want);
+  });
+});
+
+describe("calendarDays", () => {
+  it.each([
+    ["February in a non-leap year", "2026-01-31", "2026-02-28", 28],
+    ["a leap day", "2028-02-01", "2028-02-29", 28],
+    ["a 31-day month", "2026-07-01", "2026-07-31", 30],
+    ["the same date", "2026-11-16", "2026-11-16", 0],
+  ] as const)("%s", (_name, from, to, want) => {
+    expect(calendarDays(from, to)).toBe(want);
   });
 });
 
