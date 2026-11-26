@@ -1,46 +1,63 @@
-# Spec: loans (existing behaviour)
+# Spec: Loans (current behaviour)
+
+| | |
+|---|---|
+| Status | Live |
+| Screens | Login, loan list, loan detail with the installment schedule |
+| API contract | contract/openapi.yaml: `POST /api/auth/login`, `GET /api/loans`, `GET /api/loans/{id}` |
 
 ## Purpose
-How a borrower logs in and views their loans and installment schedules in the KP training lab. This is the behaviour that exists before the Pelunasan Dipercepat lab starts.
 
-## Requirements
+A borrower logs in and sees their loans and each loan's installment schedule. This is how the app works today, before Pelunasan Dipercepat is built.
 
-### Requirement: Borrower login
-The system SHALL let a demo borrower log in with email and password and return a bearer token and the borrower's id and name.
+## Business rules
 
-#### Scenario: Valid credentials
-- **WHEN** a borrower posts a known email and the matching password to the login endpoint
-- **THEN** the response is 200 with a token and the borrower's id and name
+All amounts are whole rupiah (integers, never fractional).
 
-#### Scenario: Wrong password
-- **WHEN** the password does not match
-- **THEN** the response is 401 with error code `INVALID_CREDENTIALS`
+### Login
 
-### Requirement: Only the owner sees a loan
-The system SHALL return a borrower's own loans only. A loan that belongs to another borrower MUST be reported as not found.
+| Rule | Detail |
+|---|---|
+| Credentials | A demo borrower logs in with email and password |
+| Success | Returns a bearer token, the borrower's id and name |
+| Wrong password | 401 `INVALID_CREDENTIALS` |
 
-#### Scenario: Listing loans
-- **WHEN** a logged-in borrower lists loans
-- **THEN** only loans with their borrower id are returned, each with outstanding principal, next due date and an overdue flag
+### Who sees a loan
 
-#### Scenario: Another borrower's loan
-- **WHEN** a borrower requests a loan id that belongs to someone else
-- **THEN** the response is 404 with error code `LOAN_NOT_FOUND`
+| Rule | Detail |
+|---|---|
+| Loan list | Only the logged-in borrower's own loans, each with outstanding principal, next due date and an overdue flag |
+| Another borrower's loan | Reported as not found: 404 `LOAN_NOT_FOUND` |
 
-### Requirement: Installment schedule
-The system SHALL show each loan's installment schedule. Principal is split evenly, with any remainder on the last installment. Interest is flat: the original principal times the monthly rate, the same in every installment. Each installment's due date falls on the disbursement day in each following month, moved to the last day of the month when that month is shorter.
+### Installment schedule
 
-#### Scenario: Six-month loan
-- **WHEN** a loan of Rp 6.000.000 for 6 months at 300 basis points per month is disbursed on 14 Jul 2026
-- **THEN** each installment has principal Rp 1.000.000 and interest Rp 180.000, due on the 14th from Aug 2026 to Jan 2027
+| Rule | Detail |
+|---|---|
+| Principal | Split evenly across the tenor; any remainder goes on the last installment |
+| Interest | Flat: original principal × monthly rate, the same in every installment |
+| Due date | The disbursement day in each following month, moved to the last day of the month when that month is shorter |
+| Days (Hari) | Actual calendar days since the previous due date, or since disbursement for the first installment |
 
-#### Scenario: Disbursed at the end of a month
-- **WHEN** a loan is disbursed on 31 Jul 2026
-- **THEN** the installment for September is due on 30 Sep 2026
+### Rounding
 
-### Requirement: Money is whole rupiah
-All amounts SHALL be whole rupiah integers. Percentages SHALL be applied in basis points and rounded half-up to whole rupiah.
+Percentages are applied in basis points and rounded **half-up** to whole rupiah.
 
-#### Scenario: Half-up rounding
-- **WHEN** 1% of Rp 1.666.668 is calculated
-- **THEN** the result is Rp 16.667
+## Expected behaviour
+
+| # | Behaviour |
+|---|---|
+| 1 | A known email with the matching password returns 200 with a token, the borrower's id and name. |
+| 2 | A wrong password returns 401 `INVALID_CREDENTIALS`. |
+| 3 | Listing loans returns only the logged-in borrower's loans. |
+| 4 | Requesting another borrower's loan returns 404 `LOAN_NOT_FOUND`. |
+| 5 | Each installment's principal and interest follow the schedule rules above. |
+| 6 | A loan disbursed on 31 Jul 2026 has its September installment due on 30 Sep 2026. |
+| 7 | 1% of Rp 1.666.668 is Rp 16.667 (half-up). |
+
+## Worked example
+
+Loan LN-1001: Rp 6.000.000 for 6 months at 3% (300 basis points) per month, disbursed 14 Jul 2026.
+
+| Installment | Due date | Principal | Interest | Amount |
+|---|---|---|---|---|
+| 1 to 6 | The 14th, from Aug 2026 to Jan 2027 | 1.000.000 | 180.000 | 1.180.000 |
