@@ -46,8 +46,7 @@ Build `payoff_funnel` (a view or table) in `db/models/`.
 1. What share of quotes were paid, per month from September to November 2026 (WIB)?
 2. What was the fee revenue per month?
 3. How many quotes were created per day in November 2026 (WIB)?
-4. Before reporting: does each quote's `accrued_interest` follow the rule in `docs/prd-early-repayment.md`? List any quotes that don't, with the difference in rupiah.
-5. Stretch: how much interest was waived on paid quotes (interest of installments due after the payment date)?
+4. Stretch: how much interest was waived on paid quotes (interest of installments due after the payment date)?
 
 Deliver the SQL in `db/analysis/`, the result tables, and two or three sentences per question. State every assumption.
 

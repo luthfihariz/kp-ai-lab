@@ -6,12 +6,11 @@ export function mulBps(amount: number, bps: number) {
   return divRoundHalfUp(amount * bps, 10_000);
 }
 
-/** 30/360 day count used by the installment schedule. */
+const MS_PER_DAY = 86_400_000;
+
+/** Actual calendar days between two UTC midnights. */
 export function daysBetween(from: Date, to: Date) {
-  const years = to.getUTCFullYear() - from.getUTCFullYear();
-  const months = to.getUTCMonth() - from.getUTCMonth();
-  const days = to.getUTCDate() - from.getUTCDate();
-  return years * 360 + months * 30 + days;
+  return (to.getTime() - from.getTime()) / MS_PER_DAY;
 }
 
 export function addMonthsClamped(date: Date, months: number) {

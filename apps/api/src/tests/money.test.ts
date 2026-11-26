@@ -13,10 +13,12 @@ describe("mulBps", () => {
 });
 
 describe("daysBetween", () => {
-  it("counts 30/360 days", () => {
-    const from = new Date(Date.UTC(2026, 10, 1));
-    const to = new Date(Date.UTC(2026, 10, 16));
-    expect(daysBetween(from, to)).toBe(15);
+  it.each([
+    ["within one month", Date.UTC(2026, 10, 1), Date.UTC(2026, 10, 16), 15],
+    ["across a 31-day month", Date.UTC(2026, 7, 14), Date.UTC(2026, 8, 14), 31],
+    ["across February", Date.UTC(2026, 0, 31), Date.UTC(2026, 1, 28), 28],
+  ] as const)("%s", (_name, from, to, want) => {
+    expect(daysBetween(new Date(from), new Date(to))).toBe(want);
   });
 });
 
