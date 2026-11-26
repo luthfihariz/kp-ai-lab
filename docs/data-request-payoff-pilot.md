@@ -1,10 +1,10 @@
-# KP-425: Early payoff pilot, funnel and metrics
+# Data request: early payoff pilot, funnel and metrics
 
 **Type:** Data request · **Priority:** Medium · **Requested by:** Product (early repayment) · **Sprint:** Training lab
 
 ## Background
 
-Pelunasan Dipercepat (KP-421) has run as a pilot since September 2026. Every step of a quote is recorded as an event in `analytics.payoff_events`. Product wants to know whether borrowers who request a quote go on to pay, and what the feature earns, before rolling it out to everyone.
+Pelunasan Dipercepat (`docs/prd-early-repayment.md`) has run as a pilot since September 2026. Every step of a quote is recorded as an event in `analytics.payoff_events`. Product wants to know whether borrowers who request a quote go on to pay, and what the feature earns, before rolling it out to everyone.
 
 Pilot data covers 1 Sep 2026 to 16 Nov 2026, so November is a partial month. All data is synthetic.
 
